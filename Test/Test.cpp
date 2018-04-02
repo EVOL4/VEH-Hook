@@ -4,12 +4,18 @@
 #include "stdafx.h"
 #include <windows.h>
 
+void ss()
+{
+	MessageBox(NULL, L"the fact infor222", L"test SEH hook", MB_OK);
+}
+
+
 int main()
 {
 	MessageBox(NULL, L"the fact infor222", L"test SEH hook", MB_OK);
 
 	HMODULE lib = LoadLibrary(L"..\\Debug\\VehHookDll.dll");	//小Demo,不去考虑注入时修正函数地址之类的问题
-	Sleep(2000);
+	Sleep(2000);//留些时间下断点
 
 	MessageBox(NULL, L"the fact infor222", L"test SEH hook", MB_OK);
 }

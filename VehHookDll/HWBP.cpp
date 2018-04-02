@@ -200,7 +200,7 @@ static DWORD WINAPI BpThread(PVOID Parameter)
 
 		SetBits(&context.Dr7, 16 + hwbp->Drx * 4, 2, RW);
 		SetBits(&context.Dr7, 18 + hwbp->Drx * 4, 2, Len);
-		SetBits(&context.Dr7, hwbp->Drx * 2, 1, 1);
+		SetBits(&context.Dr7, hwbp->Drx * 2, 1, 1);//Lx = 1
 	}
 
 	context.ContextFlags = CONTEXT_DEBUG_REGISTERS;

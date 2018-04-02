@@ -11,7 +11,7 @@ WCHAR* _string = L"Hello Hook";
 //4.VEH在SEH前执行
 //5.由于利用了DR0~DR3进行断点设置,所以这种方法一次只能下4个hook
 //6.在调用与线程Context有关的函数时,应将函数挂起
-//7.总结如下: 一次性可下4个HOOK,HOOK需下断点,需添加异常处理函数,而这两者都与线程绑定,线程的生命周期不方便确定,而且在多线程中,如何确定目标线程能访问到断点地址也是个问题
+//7.总结如下: 一次性可下4个HOOK,HOOK需下断点,需添加异常处理函数,而这两者都与线程绑定,线程的生命周期不方便确定,而且在多线程中,如何确定目标线程能访问到断点地址也是个问题,以及线程同步的问题
 void FakeFunc()
 {
 	wprintf(L"fake\r\n");//输出至黑窗口
@@ -101,7 +101,7 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 		DisableThreadLibraryCalls(hModule);
 		HMODULE dll = GetModuleHandle(L"user32.dll");
 		__TargetAddress = (DWORD)GetProcAddress(dll, "MessageBoxW");//HOOK MessageBoxW
-		__OFFSET = __TargetAddress + 2;								//越过断点,为什么是2个字节,__TargetAddress为目标地址,+1为 0xcc (int 3) 的地址,+2才是下一条指令的地址
+		__OFFSET = __TargetAddress + 2;								//越过mov edi,edi 8b ff 同时也越过断点地址,问:要是开头不是mov edi,edi呢
 		AddVectoredExceptionHandler(1, ExceptionFilter);			//插入线程异常处理链表头部,首先执行该过滤函数
 																	//注意要确保在执行目标线程时调用该函数,这里DllMain()由LoadLibrary()调用,所以依然在主线程中
 		HANDLE hThread = CreateThread(NULL, 0, ThreadPorcedure, NULL, 0, NULL);
